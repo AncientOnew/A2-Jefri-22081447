@@ -5,9 +5,9 @@ module.exports = app => {
   
     router.post("/orders", orders.create);
   
-    router.get("/orders/:customerId", orders.findAll);
+    router.get("/orders", orders.findAll);
   
-    
+
     router.put("/orders/:orderId", orders.update);
   
 
