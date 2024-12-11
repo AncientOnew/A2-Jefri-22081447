@@ -1,10 +1,22 @@
 import { useState, useEffect } from 'react';  // import useEffect
 import PhoneList from './PhoneList.js';
+import CompanyList from './CompanyList.js';
 
 function Contact(props) {
     const {contact, contacts, setContacts} = props;
     const [expanded, setExpanded] = useState(false);
+    const [companies, setCompanies] = useState([]);
     const [phones, setPhones] = useState([]);
+
+
+    useEffect(() => {
+        fetch("http://localhost/api/companies/" + contact.id + "/")
+        .then((response) => response.json())
+        .then((data) => setCompanies(data))
+        .catch((error) => {
+            console.error("Error:", error);
+        });
+    }, []);
 
     useEffect(() => {
         fetch('http://localhost/api/contacts/' + contact.id + '/phones')
@@ -33,6 +45,11 @@ function Contact(props) {
         setContacts(newContacts);
     }
 
+    function handleExpandClick(e) {
+        e.stopPropagation(); 
+        setExpanded(!expanded);
+    }
+
     return (
         <div key={contact.id} className='contact' onClick={(e) => setExpanded(!expanded)}>
             <div className='title'>
@@ -41,7 +58,8 @@ function Contact(props) {
                 <button className='button red' onClick={doDelete}>Delete Contact</button>
             </div>
 
-            <div style={expandStyle}>
+            <div style={expandStyle} onClick={handleExpandClick}>
+                <CompanyList contact={contact} companies={companies}  setCompanies={setCompanies} />
                 <hr />
                 <PhoneList phones={phones} setPhones={setPhones} contact={contact} />
             </div>
